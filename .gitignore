@@ -1,0 +1,9 @@
+# The Sutton & Barto book is copyrighted; keep it out of the repository.
+*.pdf
+
+.DS_Store
+
+# Rendered slide deck and Quarto's working files (rebuild with `quarto render slides/bandit.qmd`).
+/slides/*.html
+/slides/*_files/
+.quarto/

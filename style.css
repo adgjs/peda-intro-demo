@@ -1,0 +1,261 @@
+:root {
+  color-scheme: light dark;
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --text: #16181d;
+  --muted: #667085;
+  --track: #e1e4ea;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111318;
+    --surface: #1b1e26;
+    --text: #f1f3f7;
+    --muted: #9aa1ae;
+    --track: #2b2f3a;
+  }
+}
+
+.arm-blue    { --c: #2f6fed; --c-dark: #1e4fb8; --on-c: #ffffff; }
+.arm-orange  { --c: #f08c00; --c-dark: #b56a00; --on-c: #241500; }
+.arm-magenta { --c: #d6336c; --c-dark: #9f1f4c; --on-c: #ffffff; }
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;       /* no pull-to-refresh mid-game */
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  touch-action: manipulation;      /* no double-tap zoom when tapping fast */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 480px;
+  margin: 0 auto;
+  padding:
+    max(12px, env(safe-area-inset-top))
+    max(12px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-left));
+}
+
+/* ---------- Header ---------- */
+
+.top {
+  flex: none;
+  text-align: center;
+  padding: 4px 4px 12px;
+}
+
+.top p { margin: 0; }
+
+.score-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.score {
+  font-size: 60px;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.progress {
+  height: 6px;
+  margin: 8px auto 6px;
+  max-width: 260px;
+  border-radius: 3px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0;
+  border-radius: 3px;
+  background: var(--text);
+  transition: width 200ms ease-out;
+}
+
+.turns {
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  margin-top: 4px;
+}
+
+.hint {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.again {
+  min-height: 44px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 22px;
+  background: var(--text);
+  color: var(--bg);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.again:active { transform: scale(0.97); }
+
+[hidden] { display: none !important; }
+
+/* ---------- Arms ---------- */
+
+.arms {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.arm {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* column-reverse keeps the scroll position pinned to the bottom, next to the
+   button, and lets older rewards scroll out of view at the top. */
+.history {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: auto;
+  padding: 6px;
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--track);
+  scrollbar-width: none;
+}
+
+.history::-webkit-scrollbar { display: none; }
+
+/* wrap-reverse: the newest reward (first in the DOM) sits bottom-left and
+   older ones fill rightwards, then upwards. */
+.chips {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap-reverse;
+  gap: 4px;
+}
+
+.chip {
+  flex: 0 0 calc((100% - 8px) / 3 - 0.5px);
+  padding: 5px 0;
+  border-radius: 7px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  background: color-mix(in srgb, var(--c) 16%, transparent);
+  color: var(--text);
+}
+
+.chip.latest {
+  background: var(--c);
+  color: var(--on-c);
+}
+
+.chip.fresh {
+  animation: chip-in 200ms 330ms cubic-bezier(0.2, 1.4, 0.4, 1) backwards;
+}
+
+@keyframes chip-in {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.lever {
+  flex: none;
+  align-self: center;
+  width: 100%;
+  max-width: 108px;
+  aspect-ratio: 1;
+  margin: 14px 0 16px;   /* bottom room for the drop shadow */
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0) 55%),
+    var(--c);
+  box-shadow: 0 7px 0 var(--c-dark), 0 12px 18px rgba(0, 0, 0, 0.22);
+  cursor: pointer;
+  transition: transform 80ms ease-out, box-shadow 80ms ease-out, opacity 200ms;
+}
+
+.lever:active {
+  transform: translateY(5px);
+  box-shadow: 0 2px 0 var(--c-dark), 0 4px 8px rgba(0, 0, 0, 0.22);
+}
+
+.lever:focus-visible {
+  outline: 3px solid var(--text);
+  outline-offset: 4px;
+}
+
+.lever:disabled {
+  opacity: 0.35;
+  cursor: default;
+  transform: none;
+}
+
+/* The "+N" that flies from a button into its history. */
+.floater {
+  position: fixed;
+  z-index: 10;
+  pointer-events: none;
+  font-size: 22px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--c);
+  text-shadow: 0 1px 0 var(--bg), 0 -1px 0 var(--bg), 1px 0 0 var(--bg), -1px 0 0 var(--bg);
+  transform: translate(-50%, -50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip.fresh { animation: none; }
+  .progress-bar, .lever { transition: none; }
+}
+
+/* Short screens (small phones, landscape): tighten the header. */
+@media (max-height: 620px) {
+  .score { font-size: 44px; }
+  .slot { min-height: 44px; margin-top: 0; }
+  .lever { max-width: 84px; margin-top: 10px; }
+}
